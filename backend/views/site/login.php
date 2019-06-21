@@ -30,6 +30,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 </div>
 
             <?php ActiveForm::end(); ?>
+            <a href="<?= \yii\helpers\Url::toRoute('register')?>"> Register now </a>
         </div>
     </div>
 </div>
