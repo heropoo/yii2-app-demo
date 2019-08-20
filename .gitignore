@@ -1,3 +1,5 @@
+node_modules/
+
 # yii console commands
 /yii
 /yii_test
