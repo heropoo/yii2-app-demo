@@ -133,6 +133,13 @@ class User extends ActiveRecord implements IdentityInterface
         return $timestamp + $expire >= time();
     }
 
+    public static function findByAuthKey($key){
+        return static::findOne([
+            'auth_key' => $key,
+            'status' => self::STATUS_ACTIVE
+        ]);
+    }
+
     /**
      * {@inheritdoc}
      */
