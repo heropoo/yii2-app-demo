@@ -23,7 +23,6 @@ $config = yii\helpers\ArrayHelper::merge(
 $application = new yii\console\Application($config);
 
 
-
 // Create a Websocket server
 $worker = new Worker("websocket://0.0.0.0:2346");
 
@@ -50,6 +49,7 @@ $worker->onMessage = function (TcpConnection $connection, $data){
 // Emitted when connection closed
 $worker->onClose = function (TcpConnection $connection) {
     echo "Connection closed\n";
+    ChatService::handleClose($connection);
 };
 
 // Run worker

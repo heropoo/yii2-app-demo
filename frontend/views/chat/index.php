@@ -13,25 +13,21 @@
     window.onload = function(){
         ws = new WebSocket("ws://localhost:2346/?key=<?= $user->getAuthKey()?>");
         ws.onopen = function(){
-            //ws.send('请求连接。。。');
             write_msg('请求连接。。。', 1);
         };
 
         ws.onmessage = function(evt){
             let received_msg = JSON.parse(evt.data);
-            if(typeof received_msg.cid != "undefined"){
-                cid = received_msg.cid;
-            }
-            write_msg(received_msg.msg, received_msg.type, received_msg.id);
+            console.log(received_msg);
+            write_msg(received_msg.msg, received_msg.type);
         };
 
         ws.onclose = function(){
-            console.log('连接已关闭。。。');
             write_msg('连接已关闭。。。', 1);
         };
     };
 
-    function write_msg(msg, type, id) {
+    function write_msg(msg, type) {
         if(type == 1){
             msg = '<div class="msg" style="color: blue">'+ msg+'</div>';
         }else if(type == 2) {

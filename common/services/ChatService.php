@@ -13,7 +13,8 @@ class ChatService extends BaseObject
     /** @var  Worker $worker */
     private static $_worker;
 
-    public static function setWorker(Worker $worker){
+    public static function setWorker(Worker $worker)
+    {
         static::$_worker = $worker;
     }
 
@@ -29,7 +30,7 @@ class ChatService extends BaseObject
             // onWebSocketConnect 里面$_GET $_SERVER是可用的
             //var_dump($_GET, $_SERVER);
             //var_dump($connection, $http_header);
-            $connection->send(json_encode(["type" => 1, "msg" => '连接成功 id:' . $connection->id]));
+            static::pushMessage(["type" => 1, "msg" => '连接成功', 'id' => $connection->id], $connection);
 
             $key = $_GET['key'] ?? '';
             $user = User::findByAuthKey($key);
@@ -39,8 +40,9 @@ class ChatService extends BaseObject
             }
 
             static::$_users[$connection->id] = $user;
-
-            return $connection->send(json_encode(["type" => 1, "msg" => '欢迎"' . $user->username . '"加入聊天👏']));
+            foreach (static::$_worker->connections as $connection) {
+                static::pushMessage(["type" => 1, "msg" => '欢迎"' . $user->username . '"加入聊天👏'], $connection);
+            }
         };
     }
 
@@ -48,12 +50,26 @@ class ChatService extends BaseObject
     {
         $currentId = $connection->id;
         $currentUser = static::$_users[$currentId];
-        $connection->send(json_encode(["type" => 2, "msg" => $currentUser->username . ': ' . $data]));
-        foreach (static::$_worker->connections as $connection){
-            if($currentId == $connection->id){
+        static::pushMessage(["type" => 2, "msg" => $currentUser->username . ': ' . $data], $connection);
+        foreach (static::$_worker->connections as $connection) {
+            if ($currentId == $connection->id) {
                 continue;
             }
-            $connection->send(json_encode(["type" => 3, "msg" => $currentUser->username . ': ' . $data]));
+            static::pushMessage(["type" => 3, "msg" => $currentUser->username . ': ' . $data], $connection);
         }
+    }
+
+    public static function handleClose($connection)
+    {
+        $user = static::$_users[$connection->id];
+        unset(static::$_users[$connection->id]);
+        foreach (static::$_worker->connections as $connection) {
+            static::pushMessage(["type" => 1, "msg" => '"' . $user->username . '"已下线'], $connection);
+        }
+    }
+
+    protected static function pushMessage(array $msg, TcpConnection $connection)
+    {
+        return $connection->send(json_encode($msg));
     }
 }
