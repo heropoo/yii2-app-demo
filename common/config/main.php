@@ -12,5 +12,10 @@ return [
         'cache' => [
             'class' => 'yii\caching\FileCache',
         ],
+        'authManager' => [
+            'class' => 'yii\rbac\DbManager',
+        ],
     ],
+    'language'=>'zh-CN',
+    'timeZone'=>'Asia/Shanghai',
 ];
