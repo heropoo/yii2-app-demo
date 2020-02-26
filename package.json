@@ -6,6 +6,7 @@
     "jquery": "^3.4.1",
     "jquery-treegrid": "^0.3.0",
     "jquery-ui": "^1.12.1",
+    "layui-src": "^2.5.5",
     "punycode": "^2.1.0",
     "typeahead.js": "^0.11.1",
     "yii2-pjax": "^2.0.7"

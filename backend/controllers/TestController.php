@@ -7,15 +7,16 @@
 namespace backend\controllers;
 
 
-use yii\filters\AccessControl;
-use yii\filters\VerbFilter;
 use yii\web\Controller;
 
-class Test1Controller extends Controller
+class TestController extends Controller
 {
+    public $layout = 'layui';
+
     public function actionIndex()
     {
-        return 'test1 index';
+        //return 'test1 index';
+        return $this->render('index');
     }
 
     public function actionIndex2()
